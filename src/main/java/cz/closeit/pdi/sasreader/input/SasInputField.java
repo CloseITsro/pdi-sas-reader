@@ -1,19 +1,18 @@
 /**
  * *************************************************************************
  * Copyright (C) 2017 CloseIT s.r.o.
- * 
+ *
  * This file is part of SAS reader plugin.
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU General Public License version 3 as published by the Free Software
  * Foundation and appearing in the file LICENSE.GPL included in the
  * packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  * *************************************************************************
  */
-
 package cz.closeit.pdi.sasreader.input;
 
 import java.math.BigDecimal;
@@ -33,6 +32,7 @@ public class SasInputField {
     public static final String KEY_KETTLE_TYPE = "kettletype";
     public static final String KEY_LENGTH = "length";
     public static final String KEY_LABEL = "label";
+    public static final String KEY_OPTIONAL = "optional";
 
     private int originalId;
     private String sasName = "";
@@ -41,6 +41,7 @@ public class SasInputField {
     private KettleType kettleType = KettleType.NotDefined;
     private int length = 0;
     private String label = "";
+    private Boolean optional = false;
 
     public SasInputField() {
     }
@@ -53,6 +54,7 @@ public class SasInputField {
         kettleType = fieldToClone.getKettleType();
         length = fieldToClone.getLength();
         label = fieldToClone.getLabel();
+        optional = fieldToClone.getOptional();
     }
 
     public enum SasType {
@@ -75,11 +77,12 @@ public class SasInputField {
 
         /**
          * Check if the object needs to be converted. Don't use any other object
-         * than the one returned in row from parso library.
-         * It will return wrong boolean otherwise.
+         * than the one returned in row from parso library. It will return wrong
+         * boolean otherwise.
          *
          * @param object Integer, Long, Double, String or Date
-         * @return false if the conversion isn't necessary, true otherwise or for other object than Integer, Long, Double, String or Date
+         * @return false if the conversion isn't necessary, true otherwise or
+         * for other object than Integer, Long, Double, String or Date
          */
         public boolean needConversion(Object object) {
             if (object instanceof Long && kettleConst == ValueMetaInterface.TYPE_INTEGER) {
@@ -100,9 +103,10 @@ public class SasInputField {
          * compatible object.
          *
          * For example, one value in row from sas file is Double but kettle type
-         * of field is BigNumber (BigDecimal in Java) so this will convert Double to BigDecimal; The
-         * conversion might return null if the input object isn't one of the
-         * supported types or the conversion didn't work.
+         * of field is BigNumber (BigDecimal in Java) so this will convert
+         * Double to BigDecimal; The conversion might return null if the input
+         * object isn't one of the supported types or the conversion didn't
+         * work.
          *
          * @param object Integer, Long, Double, Date or String
          * @return converted object or null, if the conversion didn't work or
@@ -276,6 +280,22 @@ public class SasInputField {
 
     public String getLabel() {
         return label;
+    }
+
+    public void setOptional(String optional) {
+        if ("Y".equalsIgnoreCase(optional) || "YES".equalsIgnoreCase(optional) || "TRUE".equalsIgnoreCase(optional)) {
+            setOptional(Boolean.TRUE);
+        } else if ("N".equalsIgnoreCase(optional) || "NO".equalsIgnoreCase(optional) || "FALSE".equalsIgnoreCase(optional)) {
+            setOptional(Boolean.FALSE);
+        }
+    }
+
+    public void setOptional(Boolean optional) {
+        this.optional = optional;
+    }
+
+    public Boolean getOptional() {
+        return optional;
     }
 
 }

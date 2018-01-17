@@ -86,6 +86,9 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
     @Override
     public void getFields(RowMetaInterface inputRowMeta, String name, RowMetaInterface[] info, StepMeta nextStep, VariableSpace space, Repository repository, IMetaStore metaStore) throws KettleStepException {
         for (SasInputField inputField : inputFields) {
+            if (inputField.getOriginalId() == -1 && inputField.getOptional()) {
+                continue; //skip missing optional fields
+            }
             inputRowMeta.addValueMeta(inputField.getValueMetaInterface(name));
         }
     }
@@ -140,6 +143,7 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
             xml.append("        ").append(XMLHandler.addTagValue(SasInputField.KEY_KETTLE_TYPE, inputField.getKettleType().toString()));
             xml.append("        ").append(XMLHandler.addTagValue(SasInputField.KEY_LENGTH, inputField.getLength()));
             xml.append("        ").append(XMLHandler.addTagValue(SasInputField.KEY_LABEL, inputField.getLabel()));
+            xml.append("        ").append(XMLHandler.addTagValue(SasInputField.KEY_OPTIONAL, inputField.getOptional()));
             xml.append("    </inputfield>").append(Const.CR);
         }
         return xml.toString();
@@ -163,6 +167,8 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
                 inputField.setKettleType(SasInputField.KettleType.valueOf(XMLHandler.getTagValue(fieldNode, SasInputField.KEY_KETTLE_TYPE)));
                 inputField.setLength(Integer.parseInt(XMLHandler.getTagValue(fieldNode, SasInputField.KEY_LENGTH)));
                 inputField.setLabel(XMLHandler.getTagValue(fieldNode, SasInputField.KEY_LABEL));
+                inputField.setOptional(XMLHandler.getTagValue(fieldNode, SasInputField.KEY_OPTIONAL));
+   
                 inputFields.add(inputField);
             }
         } catch (Exception ex) {
@@ -183,6 +189,7 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
             rep.saveStepAttribute(id_transformation, id_step, i, SasInputField.KEY_KETTLE_TYPE, inputField.getKettleType().toString());
             rep.saveStepAttribute(id_transformation, id_step, i, SasInputField.KEY_LENGTH, inputField.getLength());
             rep.saveStepAttribute(id_transformation, id_step, i, SasInputField.KEY_LABEL, inputField.getLabel());
+            rep.saveStepAttribute(id_transformation, id_step, i, SasInputField.KEY_OPTIONAL, inputField.getOptional());
             i++;
         }
     }
@@ -204,6 +211,8 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
                 inputField.setKettleType(SasInputField.KettleType.valueOf(rep.getStepAttributeString(id_step, i, SasInputField.KEY_KETTLE_TYPE)));
                 inputField.setLength((int) rep.getStepAttributeInteger(id_step, i, SasInputField.KEY_LENGTH));
                 inputField.setLabel(rep.getStepAttributeString(id_step, i, SasInputField.KEY_LABEL));
+                inputField.setOptional(rep.getStepAttributeString(id_step, i, SasInputField.KEY_OPTIONAL));
+                
                 inputFields.add(inputField);
             }
 
@@ -253,7 +262,7 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
                 // File doesn't have specified column or more than one column with same name was found
                 for (SasInputField inputField : inputFields) {
                     int numberOfFoundColumnsInFile = parsoService.countColumnsWithNameSetOrigId(inputField);
-                    if (numberOfFoundColumnsInFile == 0) {
+                    if (numberOfFoundColumnsInFile == 0 && inputField.getOptional()) {
                         cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Error.NoNameFound").replace("$name", inputField.getSasName()), stepMeta);
                         remarks.add(cr);
                     } else if (numberOfFoundColumnsInFile > 1) {

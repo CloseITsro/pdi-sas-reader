@@ -1,19 +1,18 @@
 /**
  * *************************************************************************
  * Copyright (C) 2017 CloseIT s.r.o.
- * 
+ *
  * This file is part of SAS reader plugin.
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU General Public License version 3 as published by the Free Software
  * Foundation and appearing in the file LICENSE.GPL included in the
  * packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  * *************************************************************************
  */
-
 package cz.closeit.pdi.sasreader;
 
 import java.io.File;
@@ -69,6 +68,8 @@ import org.eclipse.swt.events.MouseListener;
 
 public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInterface {
 
+    private static final Class<?> PKG = SasReaderStepMeta.I18N_CLASS;
+
     // If we input invalid data to table, use these default values
     private static final SasInputField.SasType DEFAULT_SAS_TYPE = SasInputField.SasType.Character;
     private static final SasInputField.KettleType DEFAULT_KETTLE_TYPE = SasInputField.KettleType.NotDefined;
@@ -92,7 +93,7 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
     private Label wlColumns;
     private TableView wColumns;
     private FormData fdlColumns, fdColumns;
-    
+
     // logo
     private Button logo;
 
@@ -104,7 +105,8 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
     /**
      * Construct and open the dialog.
      *
-     * @return if the dialog is canceled - null, if the dialog is confirmed - new step name
+     * @return if the dialog is canceled - null, if the dialog is confirmed -
+     * new step name
      */
     @Override
     public String open() {
@@ -129,7 +131,7 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
         formLayout.marginHeight = Const.FORM_MARGIN;
 
         shell.setLayout(formLayout);
-        shell.setText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Title"));
+        shell.setText(BaseMessages.getString(PKG, "Dialog.Title"));
 
         int middle = props.getMiddlePct();
         int margin = Const.MARGIN;
@@ -138,7 +140,7 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
         ///// STEP NAME /////
         /////////////////////
         wlStepname = new Label(shell, SWT.RIGHT);
-        wlStepname.setText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Label.StepName"));
+        wlStepname.setText(BaseMessages.getString(PKG, "Dialog.Label.StepName"));
         props.setLook(wlStepname);
         fdlStepname = new FormData();
         fdlStepname.left = new FormAttachment(0, 0);
@@ -160,7 +162,7 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
         ///// BROWSE FILE /////
         ///////////////////////
         wlFilename = new Label(shell, SWT.RIGHT);
-        wlFilename.setText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Label.Browse"));
+        wlFilename.setText(BaseMessages.getString(PKG, "Dialog.Label.Browse"));
         props.setLook(wlFilename);
         fdlFilename = new FormData();
         fdlFilename.left = new FormAttachment(0, 0);
@@ -169,7 +171,7 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
         wlFilename.setLayoutData(fdlFilename);
 
         wbbFilename = new Button(shell, SWT.PUSH | SWT.CENTER);
-        wbbFilename.setText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Button.Browse"));
+        wbbFilename.setText(BaseMessages.getString(PKG, "Dialog.Button.Browse"));
         props.setLook(wbbFilename);
         fdbFilename = new FormData();
         fdbFilename.top = new FormAttachment(wStepname, margin);
@@ -195,7 +197,7 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
                     dialog.setFileName(fname);
                 }
 
-                dialog.setFilterNames(new String[]{BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.FileType.Sas"), BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.FileType.All")});
+                dialog.setFilterNames(new String[]{BaseMessages.getString(PKG, "Dialog.FileType.Sas"), BaseMessages.getString(PKG, "Dialog.FileType.All")});
 
                 if (dialog.open() != null) {
                     String str = dialog.getFilterPath() + System.getProperty("file.separator") + dialog.getFileName();
@@ -209,7 +211,7 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
         ///// PREFER BIGNUMBER /////
         ////////////////////////////
         wlBigNumber = new Label(shell, SWT.RIGHT);
-        wlBigNumber.setText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Label.BigNumber"));
+        wlBigNumber.setText(BaseMessages.getString(PKG, "Dialog.Label.BigNumber"));
         props.setLook(wlBigNumber);
         fdlBigNumber = new FormData();
         fdlBigNumber.left = new FormAttachment(0, 0);
@@ -218,7 +220,7 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
         wlBigNumber.setLayoutData(fdlBigNumber);
 
         wbBigNumber = new Button(shell, SWT.CHECK | SWT.LEFT | SWT.BORDER);
-        wbBigNumber.setToolTipText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Tooltip.PreferBigNumber"));
+        wbBigNumber.setToolTipText(BaseMessages.getString(PKG, "Dialog.Tooltip.PreferBigNumber"));
         props.setLook(wbBigNumber);
         // TODO I'll just leave it here in case we want to save this checkbox to stepMeta
         /*wbBigNumber.addSelectionListener(new SelectionListener() {
@@ -237,32 +239,35 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
         ///// TABLE OF COLUMNS /////
         ////////////////////////////
         wlColumns = new Label(shell, SWT.NONE);
-        wlColumns.setText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Label.Columns"));
+        wlColumns.setText(BaseMessages.getString(PKG, "Dialog.Label.Columns"));
         props.setLook(wlColumns);
         fdlColumns = new FormData();
         fdlColumns.left = new FormAttachment(0, 0);
         fdlColumns.top = new FormAttachment(wbBigNumber, margin);
         wlColumns.setLayoutData(fdlColumns);
 
-        int numberOfColumns = 7;
+        int numberOfColumns = 8;
         int numberOfRows = 1;
 
         ColumnInfo[] ci = new ColumnInfo[numberOfColumns];
-        ci[0] = new ColumnInfo(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Column.Id"), ColumnInfo.COLUMN_TYPE_TEXT);
-        ci[0].setToolTip(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Tooltip.ColumnId"));
+        ci[0] = new ColumnInfo(BaseMessages.getString(PKG, "Dialog.Column.Id"), ColumnInfo.COLUMN_TYPE_TEXT);
+        ci[0].setToolTip(BaseMessages.getString(PKG, "Dialog.Tooltip.ColumnId"));
         ci[0].setReadOnly(true);
-        ci[1] = new ColumnInfo(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Column.SasName"), ColumnInfo.COLUMN_TYPE_TEXT);
-        ci[1].setToolTip(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Tooltip.ColumnSasName"));
-        ci[2] = new ColumnInfo(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Column.Name"), ColumnInfo.COLUMN_TYPE_TEXT);
-        ci[2].setToolTip(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Tooltip.ColumnName"));
-        ci[3] = new ColumnInfo(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Column.SasType"), ColumnInfo.COLUMN_TYPE_CCOMBO, new String[]{"Character", "Numeric"});
-        ci[3].setToolTip(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Tooltip.ColumnSasType"));
-        ci[4] = new ColumnInfo(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Column.Length"), ColumnInfo.COLUMN_TYPE_TEXT);
-        ci[4].setToolTip(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Tooltip.ColumnSasLength"));
-        ci[5] = new ColumnInfo(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Column.KettleType"), ColumnInfo.COLUMN_TYPE_CCOMBO, new String[]{"String", "Number", "BigNumber", "Integer", "Date"});
-        ci[5].setToolTip(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Tooltip.ColumnKettleType"));
-        ci[6] = new ColumnInfo(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Column.Label"), ColumnInfo.COLUMN_TYPE_TEXT);
-        ci[6].setToolTip(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Tooltip.ColumnLabel"));
+        ci[1] = new ColumnInfo(BaseMessages.getString(PKG, "Dialog.Column.SasName"), ColumnInfo.COLUMN_TYPE_TEXT);
+        ci[1].setToolTip(BaseMessages.getString(PKG, "Dialog.Tooltip.ColumnSasName"));
+        ci[2] = new ColumnInfo(BaseMessages.getString(PKG, "Dialog.Column.Name"), ColumnInfo.COLUMN_TYPE_TEXT);
+        ci[2].setToolTip(BaseMessages.getString(PKG, "Dialog.Tooltip.ColumnName"));
+        ci[3] = new ColumnInfo(BaseMessages.getString(PKG, "Dialog.Column.SasType"), ColumnInfo.COLUMN_TYPE_CCOMBO, new String[]{"Character", "Numeric"});
+        ci[3].setToolTip(BaseMessages.getString(PKG, "Dialog.Tooltip.ColumnSasType"));
+        ci[4] = new ColumnInfo(BaseMessages.getString(PKG, "Dialog.Column.Length"), ColumnInfo.COLUMN_TYPE_TEXT);
+        ci[4].setToolTip(BaseMessages.getString(PKG, "Dialog.Tooltip.ColumnSasLength"));
+        ci[5] = new ColumnInfo(BaseMessages.getString(PKG, "Dialog.Column.KettleType"), ColumnInfo.COLUMN_TYPE_CCOMBO, new String[]{"String", "Number", "BigNumber", "Integer", "Date"});
+        ci[5].setToolTip(BaseMessages.getString(PKG, "Dialog.Tooltip.ColumnKettleType"));
+        ci[6] = new ColumnInfo(BaseMessages.getString(PKG, "Dialog.Column.Label"), ColumnInfo.COLUMN_TYPE_TEXT);
+        ci[6].setToolTip(BaseMessages.getString(PKG, "Dialog.Tooltip.ColumnLabel"));
+        ci[7] = new ColumnInfo(BaseMessages.getString(PKG, "Dialog.Column.Optional"), ColumnInfo.COLUMN_TYPE_CCOMBO, new String[]{
+            BaseMessages.getString(PKG, "System.Combo.Yes"), BaseMessages.getString(PKG, "System.Combo.No"),});
+        ci[7].setToolTip(BaseMessages.getString(PKG, "Dialog.Tooltip.ColumnOptional"));
 
         wColumns = new TableView(transMeta, shell, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL, ci, numberOfRows, modifyListener, props);
         wColumns.setSortable(true);
@@ -278,14 +283,14 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
         ///// BOTTOM BUTTONS /////
         //////////////////////////
         wOK = new Button(shell, SWT.PUSH);
-        wOK.setText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Button.OK"));
+        wOK.setText(BaseMessages.getString(PKG, "Dialog.Button.OK"));
         wGet = new Button(shell, SWT.PUSH);
-        wGet.setText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Button.Get"));
-        wGet.setToolTipText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Tooltip.GetFields"));
+        wGet.setText(BaseMessages.getString(PKG, "Dialog.Button.Get"));
+        wGet.setToolTipText(BaseMessages.getString(PKG, "Dialog.Tooltip.GetFields"));
         wPreview = new Button(shell, SWT.PUSH);
-        wPreview.setText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Button.Preview"));
+        wPreview.setText(BaseMessages.getString(PKG, "Dialog.Button.Preview"));
         wCancel = new Button(shell, SWT.PUSH);
-        wCancel.setText(BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Button.Cancel"));
+        wCancel.setText(BaseMessages.getString(PKG, "Dialog.Button.Cancel"));
         BaseStepDialog.positionBottomButtons(shell, new Button[]{wOK, wGet, wPreview, wCancel}, margin, null);
 
         //////////////////////////
@@ -294,14 +299,13 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
         FormData fdLogo = new FormData();
         fdLogo.bottom = new FormAttachment(100, 0);
         fdLogo.right = new FormAttachment(100, 0);
-        
+
         Image logoIm = new Image(display, this.getClass().getResourceAsStream("/cz/closeit/pdi/sasreader/images/logo.png"));
         logo = new Button(shell, SWT.PUSH);
         logo.setImage(logoIm);
         logo.setLayoutData(fdLogo);
-        
+
         // listener for logo
-        
         logo.addMouseListener(new MouseListener() {
             @Override
             public void mouseDoubleClick(MouseEvent me) {
@@ -413,6 +417,10 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
             item.setText(5, Integer.toString(inputFields.get(i).getLength()));
             item.setText(6, inputFields.get(i).getKettleType().toString());
             item.setText(7, inputFields.get(i).getLabel());
+
+            if (inputFields.get(i).getOptional()) {
+                item.setText(8, BaseMessages.getString(PKG, "System.Combo.Yes"));
+            }
         }
         wColumns.setRowNums();
         wColumns.optWidth(true);
@@ -459,6 +467,11 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
 
             inputField.setLabel(wColumns.table.getItem(i).getText(7));
 
+            if (wColumns.table.getItem(i).getText(8) != null) {
+                inputField.setOptional(wColumns.table.getItem(i).getText(8).equalsIgnoreCase(
+                        BaseMessages.getString(PKG, "System.Combo.Yes")) ? true : false);
+            }
+
             inputFields.add(inputField);
         }
         stepMeta.setInputFields(inputFields);
@@ -467,9 +480,9 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
     private void ok() {
         stepname = wStepname.getText();
         saveData(stepMeta);
-        
+
         dispose();
-        
+
         if (logo != null) {
             logo.dispose();
         }
@@ -497,7 +510,7 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
         saveData(stepMeta);
 
         TransMeta previewMeta = TransPreviewFactory.generatePreviewTransformation(transMeta, stepMeta, wStepname.getText());
-        EnterNumberDialog numberDialog = new EnterNumberDialog(shell, props.getDefaultPreviewSize(), BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Preview.Title"), BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Preview.Message"));
+        EnterNumberDialog numberDialog = new EnterNumberDialog(shell, props.getDefaultPreviewSize(), BaseMessages.getString(PKG, "Dialog.Preview.Title"), BaseMessages.getString(PKG, "Dialog.Preview.Message"));
         int previewSize = numberDialog.open();
 
         if (previewSize > 0) {
@@ -508,7 +521,7 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
 
             if (!progressDialog.isCancelled()) {
                 if (trans.getResult() != null && trans.getResult().getNrErrors() > 0) {
-                    EnterTextDialog enterTextDialog = new EnterTextDialog(shell, BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Preview.Error.Title"), BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Dialog.Preview.Error.Message"), loggingText, true);
+                    EnterTextDialog enterTextDialog = new EnterTextDialog(shell, BaseMessages.getString(PKG, "Dialog.Preview.Error.Title"), BaseMessages.getString(PKG, "Dialog.Preview.Error.Message"), loggingText, true);
                     enterTextDialog.setReadOnly();
                     enterTextDialog.open();
                 }
@@ -524,7 +537,7 @@ public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInt
         stepname = null;
         stepMeta.setChanged(oldChanged);
         dispose();
-        
+
         if (logo != null) {
             logo.dispose();
         }

@@ -203,7 +203,8 @@ public class ParsoService {
     /**
      * Count the number of columns in file with specified name. This is done in
      * order to find non-existent (or renamed) columns and duplicated columns.
-     * The id of last column in file with same name is saved to SasInputField.
+     * The id of last column in file with same name is saved to SasInputField. 
+     * If the field isn't there, the original id is set to -1.
      * Search is case insensitive.
      *
      * @param inputField sas input field we want to find
@@ -214,8 +215,9 @@ public class ParsoService {
         int counter = -1;
         if (isReady) {
             counter = 0;
+            inputField.setOriginalId(-1);
             for (Column column : parsoReader.getColumns()) {
-                if (column.getName().toLowerCase().equals(inputField.getSasName().toLowerCase())) {
+                if (column.getName().equalsIgnoreCase(inputField.getSasName())) {
                     inputField.setOriginalId(column.getId());
                     counter++;
                 }

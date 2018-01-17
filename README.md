@@ -2,14 +2,17 @@ CloseIT SAS reader - PDI plugin
 =====
 
 ## Description
-CloseIT SAS reader is a PDI step plugin for reading data from SAS files (sas7bdat), based on the [Parso library](https://github.com/epam/parso) .
+CloseIT SAS reader is a PDI input step plugin for reading data from SAS files (sas7bdat) based on the [Parso library](https://github.com/epam/parso). It was created as a feature rich substitution for default SAS reader step.
 
 ### Features
-* <b>support compressed SAS files</b>
-* <b>column order independence</b> - plugin use inserted SAS column names to identify fields in input rows, so any column order change on input won't have impact on your transformation
-* <b>column renaming</b> - you can rename original SAS column names just in one step, so you do not have to use other step for this
-* <b>output data type change</b> - the step can convert SAS datatypes to desired output format in best possible way
-* <b>intensive step checks</b> - PDI transformation verification function will execute several step checks, you will be informed about possible problems and about defined SAS file.
+* <b>Supports compressed SAS data sets</b> - default SAS reader step is unable to read compressed SAS data sets. CloseIT SAS reader is able to read them thanks to underlying Parso library.
+* <b>Column order independence</b> - plugin uses defined SAS column names to identify fields in input rows, so any column order change on input won't have impact on your transformation.
+* <b>Optional columns (1.2.0-SNAPSHOT)</b> - missing columns in SAS data sets are reported so you know the input isn't correct. Columns can be marked as optional so they skip the presence check.
+* <b>Column renaming</b> - the definition of SAS data set column names and output column names is separate so you can rename then just in one step.
+* <b>Output data type change</b> - the step can convert SAS datatypes to desired output format in best possible way.
+* <b>Intensive step checks</b> - PDI transformation verification function will execute several step checks and you will be informed about possible problems.
+
+* <b>Your own cool feature</b> - do you need a feature which is missing now? Get in touch with us. Implement a feature, do a pull request. We would like to make the best ETL SAS reader together with FOSS community.
 
 ## Installation
 
