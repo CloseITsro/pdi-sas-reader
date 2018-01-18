@@ -68,7 +68,7 @@ import org.eclipse.swt.events.MouseListener;
 
 public class SasReaderStepDialog extends BaseStepDialog implements StepDialogInterface {
 
-    private static final Class<?> PKG = SasReaderStepMeta.I18N_CLASS;
+    private static final Class<?> PKG = SasReaderStepMeta.PKG;
 
     // If we input invalid data to table, use these default values
     private static final SasInputField.SasType DEFAULT_SAS_TYPE = SasInputField.SasType.Character;

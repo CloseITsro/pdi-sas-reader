@@ -1,19 +1,18 @@
 /**
  * *************************************************************************
  * Copyright (C) 2017 CloseIT s.r.o.
- * 
+ *
  * This file is part of SAS reader plugin.
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU General Public License version 3 as published by the Free Software
  * Foundation and appearing in the file LICENSE.GPL included in the
  * packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  * *************************************************************************
  */
-
 package cz.closeit.pdi.sasreader;
 
 import java.io.File;
@@ -54,15 +53,15 @@ import org.w3c.dom.Node;
 import cz.closeit.pdi.sasreader.input.SasInputField;
 import cz.closeit.pdi.sasreader.parso.ParsoService;
 
-@Step(id = "CloseITSasReader", 
-      i18nPackageName = "cz.closeit.pdi.sasreader", 
-      image = "cz/closeit/pdi/sasreader/images/SASInput.png", 
-      name = "CloseIt.SasReader.Step.Name",
-      description = "CloseIt.SasReader.Step.Description", 
-      categoryDescription = "CloseIt.SasReader.Step.CategoryDescription")
+@Step(id = "CloseITSasReader",
+        i18nPackageName = "cz.closeit.pdi.sasreader",
+        image = "cz/closeit/pdi/sasreader/images/SASInput.png",
+        name = "CloseIt.SasReader.Step.Name",
+        description = "CloseIt.SasReader.Step.Description",
+        categoryDescription = "CloseIt.SasReader.Step.CategoryDescription")
 public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface {
 
-    public static final Class<?> I18N_CLASS = SasReaderStepMeta.class;
+    public static final Class<?> PKG = SasReaderStepMeta.class;
     public static final String KEY_FILENAME = "filename";
 
     private String fileName = "";
@@ -92,7 +91,7 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
             inputRowMeta.addValueMeta(inputField.getValueMetaInterface(name));
         }
     }
-    
+
     public StepDialogInterface getDialog(Shell shell, StepMetaInterface meta, TransMeta transMeta, String name) {
         return new SasReaderStepDialog(shell, meta, transMeta, name);
     }
@@ -168,11 +167,11 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
                 inputField.setLength(Integer.parseInt(XMLHandler.getTagValue(fieldNode, SasInputField.KEY_LENGTH)));
                 inputField.setLabel(XMLHandler.getTagValue(fieldNode, SasInputField.KEY_LABEL));
                 inputField.setOptional(XMLHandler.getTagValue(fieldNode, SasInputField.KEY_OPTIONAL));
-   
+
                 inputFields.add(inputField);
             }
         } catch (Exception ex) {
-            throw new KettleXMLException(BaseMessages.getString(I18N_CLASS, "Exception.XML.UnableToRead"), ex);
+            throw new KettleXMLException(BaseMessages.getString(PKG, "Exception.XML.UnableToRead"), ex);
         }
     }
 
@@ -212,27 +211,22 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
                 inputField.setLength((int) rep.getStepAttributeInteger(id_step, i, SasInputField.KEY_LENGTH));
                 inputField.setLabel(rep.getStepAttributeString(id_step, i, SasInputField.KEY_LABEL));
                 inputField.setOptional(rep.getStepAttributeString(id_step, i, SasInputField.KEY_OPTIONAL));
-                
+
                 inputFields.add(inputField);
             }
 
         } catch (Exception ex) {
-            throw new KettleException(BaseMessages.getString(I18N_CLASS, "Exception.Rep.UnableToRead") + id_step, ex);
+            throw new KettleException(BaseMessages.getString(PKG, "Exception.Rep.UnableToRead") + id_step, ex);
         }
     }
-    
+
     /**
-     * Implements a function for verifying step. File an error or warning if:
-     * - no sas file is defined
-     * - sas file cannot be read
-     * - sas file is empty
-     * - name of column doesn't exist in sas file
-     * - file has duplicite columns
-     * - KettleType of some column isn't defined
-     * - sas file wasn't found
-     * - no field is defined for this step
-     * - step input is connected to other step
-     * - step output isn't connected
+     * Implements a function for verifying step. File an error or warning if: -
+     * no sas file is defined - sas file cannot be read - sas file is empty -
+     * name of column doesn't exist in sas file - file has duplicite columns -
+     * KettleType of some column isn't defined - sas file wasn't found - no
+     * field is defined for this step - step input is connected to other step -
+     * step output isn't connected
      */
     @Override
     public void check(List<CheckResultInterface> remarks, TransMeta transmeta, StepMeta stepMeta, RowMetaInterface prev, String input[], String output[], RowMetaInterface info) {
@@ -241,55 +235,39 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
         File sasFile = new File(fileName);
         if (fileName.isEmpty()) {
             // No filename defined
-            cr = new CheckResult(CheckResult.TYPE_RESULT_WARNING, BaseMessages.getString(I18N_CLASS, "Error.NoFilename"), stepMeta);
+            cr = new CheckResult(CheckResult.TYPE_RESULT_WARNING, BaseMessages.getString(PKG, "Error.NoFilename"), stepMeta);
             remarks.add(cr);
         } else if (!sasFile.exists() || !sasFile.canRead()) {
             // File cannot be read
-            cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(I18N_CLASS, "Error.CantRead"), stepMeta);
+            cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(PKG, "Error.CantRead"), stepMeta);
             remarks.add(cr);
         } else {
             InputStream stream = null;
             try {
                 stream = new FileInputStream(sasFile);
                 ParsoService parsoService = new ParsoService(stream);
-                
+
                 if (parsoService.getNumberOfRows() == 0) {
                     // Provided sas file is empty
-                    cr = new CheckResult(CheckResult.TYPE_RESULT_WARNING, BaseMessages.getString(I18N_CLASS, "Error.EmptyFile"), stepMeta);
+                    cr = new CheckResult(CheckResult.TYPE_RESULT_WARNING, BaseMessages.getString(PKG, "Error.EmptyFile"), stepMeta);
                     remarks.add(cr);
                 }
-                
-                // File doesn't have specified column or more than one column with same name was found
-                for (SasInputField inputField : inputFields) {
-                    int numberOfFoundColumnsInFile = parsoService.countColumnsWithNameSetOrigId(inputField);
-                    if (numberOfFoundColumnsInFile == 0 && inputField.getOptional()) {
-                        cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Error.NoNameFound").replace("$name", inputField.getSasName()), stepMeta);
-                        remarks.add(cr);
-                    } else if (numberOfFoundColumnsInFile > 1) {
-                        cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Error.DupliciteColumn")
-                                .replace("$name", inputField.getSasName())
-                                .replace("$number", String.valueOf(numberOfFoundColumnsInFile)), stepMeta);
-                        remarks.add(cr);
-                    } else if (numberOfFoundColumnsInFile == -1) {
-                        cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(SasReaderStepMeta.I18N_CLASS, "Error.ParsoServiceInit"), stepMeta);
-                        remarks.add(cr);
-                    }
-                    
-                    if (inputField.getKettleType() == SasInputField.KettleType.NotDefined) {
-                        // KettleType of field is not defined
-                        cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(I18N_CLASS, "Error.NoKettleType").replace("$name", inputField.getName()), stepMeta);
-                        remarks.add(cr);
-                    }
+
+                try {
+                    checkColumnPresence(remarks, stepMeta, parsoService);
+                } catch (KettleException ex) {
+                    cr = new CheckResult(CheckResult.TYPE_RESULT_WARNING, BaseMessages.getString(PKG, "Warning.UnexpectedException"), stepMeta);
+                    remarks.add(cr);
                 }
-                
+
                 // Information about file
-                cr = new CheckResult(CheckResult.TYPE_RESULT_COMMENT, BaseMessages.getString(I18N_CLASS, "Comment.FileInfo")
+                cr = new CheckResult(CheckResult.TYPE_RESULT_COMMENT, BaseMessages.getString(PKG, "Comment.FileInfo")
                         .replace("$columns", String.valueOf(parsoService.getNumberOfColumns()))
                         .replace("$rows", String.valueOf(parsoService.getNumberOfRows())), stepMeta);
                 remarks.add(cr);
             } catch (FileNotFoundException ex) {
                 // File wasn't found
-                cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(I18N_CLASS, "Error.FileNotFound"), stepMeta);
+                cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(PKG, "Error.FileNotFound"), stepMeta);
                 remarks.add(cr);
             } finally {
                 try {
@@ -302,28 +280,27 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
         }
         if (inputFields.isEmpty()) {
             // No field is defined
-            cr = new CheckResult(CheckResult.TYPE_RESULT_WARNING, BaseMessages.getString(I18N_CLASS, "Error.NoFields"), stepMeta);
+            cr = new CheckResult(CheckResult.TYPE_RESULT_WARNING, BaseMessages.getString(PKG, "Error.NoFields"), stepMeta);
             remarks.add(cr);
-        }        
+        }
         if (input.length != 0) {
             // Step input is connected
-            cr = new CheckResult(CheckResult.TYPE_RESULT_WARNING, BaseMessages.getString(I18N_CLASS, "Error.Inputs"), stepMeta);
-            remarks.add(cr); 
+            cr = new CheckResult(CheckResult.TYPE_RESULT_WARNING, BaseMessages.getString(PKG, "Error.Inputs"), stepMeta);
+            remarks.add(cr);
         }
         if (output.length == 0) {
             // Step output isn't connected
-            cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(I18N_CLASS, "Error.Outputs"), stepMeta);
-            remarks.add(cr); 
-        }         
+            cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(PKG, "Error.Outputs"), stepMeta);
+            remarks.add(cr);
+        }
     }
 
     public void setFileName(String fileName) {
         if (fileName == null) {
             this.fileName = "";
-        }
-        else {
+        } else {
             this.fileName = fileName;
-        }        
+        }
     }
 
     public String getFileName() {
@@ -336,6 +313,59 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
 
     public List<SasInputField> getInputFields() {
         return inputFields;
+    }
+
+    /**
+     * Checks if all non-optional defined columns are in SAS data set (also
+     * looks for duplicated). If List CheckResultInterface object is passed,
+     * it's filled with remarks. If the null is passed, KettleException is
+     * thrown instead.
+     *
+     * @param remarks null if check is executed from processRow
+     * @param stepMeta null if check is executed from processRow
+     * @param parsoService
+     */
+    public void checkColumnPresence(List<CheckResultInterface> remarks, StepMeta stepMeta, ParsoService parsoService) throws KettleException {
+        CheckResult cr;
+        for (SasInputField inputField : inputFields) {
+            int numberOfFoundColumnsInFile = parsoService.countColumnsWithNameSetOrigId(inputField);
+            if (numberOfFoundColumnsInFile == 0 && !inputField.getOptional()) {
+                if (remarks != null) {
+                    cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(SasReaderStepMeta.PKG, "Error.NoNameFound").replace("$name", inputField.getSasName()), stepMeta);
+                    remarks.add(cr);
+                } else {
+                    throw new KettleException(BaseMessages.getString(PKG, "Error.NoNameFound").replace("$name", inputField.getSasName()));
+                }
+            } else if (numberOfFoundColumnsInFile > 1) {
+                if (remarks != null) {
+                    cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(SasReaderStepMeta.PKG, "Error.DupliciteColumn")
+                            .replace("$name", inputField.getSasName())
+                            .replace("$number", String.valueOf(numberOfFoundColumnsInFile)), stepMeta);
+                    remarks.add(cr);
+                } else {
+                    throw new KettleException(BaseMessages.getString(PKG, "Error.DupliciteColumn")
+                            .replace("$name", inputField.getSasName())
+                            .replace("$number", String.valueOf(numberOfFoundColumnsInFile)));
+                }
+            } else if (numberOfFoundColumnsInFile == -1) {
+                if (remarks != null) {
+                    cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(SasReaderStepMeta.PKG, "Error.ParsoServiceInit"), stepMeta);
+                    remarks.add(cr);
+                } else {
+                    throw new KettleException(BaseMessages.getString(PKG, "Error.ParsoServiceInit"));
+                }
+            }
+
+            if (inputField.getKettleType() == SasInputField.KettleType.NotDefined) {
+                // KettleType of field is not defined
+                if (remarks != null) {
+                    cr = new CheckResult(CheckResult.TYPE_RESULT_ERROR, BaseMessages.getString(PKG, "Error.NoKettleType").replace("$name", inputField.getName()), stepMeta);
+                    remarks.add(cr);
+                } else {
+                    throw new KettleException(BaseMessages.getString(PKG, "Error.NoKettleType").replace("$name", inputField.getName()));
+                }
+            }
+        }
     }
 
 }

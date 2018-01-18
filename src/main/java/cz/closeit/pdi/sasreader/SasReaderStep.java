@@ -39,7 +39,7 @@ import cz.closeit.pdi.sasreader.parso.ParsoService;
 
 public class SasReaderStep extends BaseStep implements StepInterface {
 
-    private static final Class<?> PKG = SasReaderStepMeta.I18N_CLASS;
+    private static final Class<?> PKG = SasReaderStepMeta.PKG;
 
     //NO FIELDS HERE PLEASE
     public SasReaderStep(StepMeta stepMeta, StepDataInterface stepDataInterface, int copyNr, TransMeta transMeta, Trans trans) {
@@ -89,18 +89,7 @@ public class SasReaderStep extends BaseStep implements StepInterface {
             stepData.parsoService = new ParsoService(stream);
 
             //check if names of defined columns are in sas file
-            for (SasInputField inputField : stepMeta.getInputFields()) {
-                int numberOfFoundColumnsInFile = stepData.parsoService.countColumnsWithNameSetOrigId(inputField);
-                if (numberOfFoundColumnsInFile == 0 && !inputField.getOptional()) {
-                    throw new KettleException(BaseMessages.getString(PKG, "Error.NoNameFound").replace("$name", inputField.getSasName()));
-                } else if (numberOfFoundColumnsInFile > 1) {
-                    throw new KettleException(BaseMessages.getString(PKG, "Error.DupliciteColumn")
-                            .replace("$name", inputField.getSasName())
-                            .replace("$number", String.valueOf(numberOfFoundColumnsInFile)));
-                } else if (numberOfFoundColumnsInFile == -1) {
-                    throw new KettleException(BaseMessages.getString(PKG, "Error.ParsoServiceInit"));
-                }
-            }
+            stepMeta.checkColumnPresence(null, null, stepData.parsoService);
 
             stepData.outputRowMeta = new RowMeta();
             //set the description of output rows based on input
