@@ -36,6 +36,7 @@ import org.pentaho.di.trans.step.StepMetaInterface;
 
 import cz.closeit.pdi.sasreader.input.SasInputField;
 import cz.closeit.pdi.sasreader.parso.ParsoService;
+import java.util.ArrayList;
 
 public class SasReaderStep extends BaseStep implements StepInterface {
 
@@ -113,13 +114,18 @@ public class SasReaderStep extends BaseStep implements StepInterface {
         int outputIndex = 0;
         for (SasInputField inputField : stepMeta.getInputFields()) {
 
-            int originalIndex = inputField.getOriginalId() - 1;
-
-            if (inputField.getOptional() && ((originalIndex > rowFileValues.length - 1) || originalIndex == -1)) {
+            int originalIndex = inputField.getOriginalId();
+            
+            if (originalIndex > rowFileValues.length - 1) {
+                throw new IndexOutOfBoundsException(BaseMessages.getString(PKG, "Error.IndexOOB").replaceFirst("$name", inputField.getSasName()));
+            }
+            else if (inputField.getOptional() && originalIndex == -1) {
+                rowValues[outputIndex] = null;
+                outputIndex++;
                 continue;
             }
 
-            Object objectFromSasFile = rowFileValues[originalIndex];
+            Object objectFromSasFile = rowFileValues[originalIndex - 1];
 
             if (objectFromSasFile == null) {
                 rowValues[outputIndex] = null;
@@ -137,7 +143,7 @@ public class SasReaderStep extends BaseStep implements StepInterface {
                     throw new ClassCastException(msg);
                 }
             } else {
-                rowValues[outputIndex] = rowFileValues[originalIndex];
+                rowValues[outputIndex] = objectFromSasFile;
             }
             outputIndex++;
         }

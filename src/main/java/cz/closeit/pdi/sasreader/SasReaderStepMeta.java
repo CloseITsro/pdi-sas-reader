@@ -85,9 +85,6 @@ public class SasReaderStepMeta extends BaseStepMeta implements StepMetaInterface
     @Override
     public void getFields(RowMetaInterface inputRowMeta, String name, RowMetaInterface[] info, StepMeta nextStep, VariableSpace space, Repository repository, IMetaStore metaStore) throws KettleStepException {
         for (SasInputField inputField : inputFields) {
-            if (inputField.getOriginalId() == -1 && inputField.getOptional()) {
-                continue; //skip missing optional fields
-            }
             inputRowMeta.addValueMeta(inputField.getValueMetaInterface(name));
         }
     }
