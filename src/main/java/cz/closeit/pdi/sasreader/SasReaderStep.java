@@ -116,7 +116,8 @@ public class SasReaderStep extends BaseStep implements StepInterface {
 
             int originalIndex = inputField.getOriginalId();
             
-            if (originalIndex > rowFileValues.length - 1) {
+            //The Id starts from 1 not 0 so we need to check against the length
+            if (originalIndex > rowFileValues.length) {
                 throw new IndexOutOfBoundsException(BaseMessages.getString(PKG, "Error.IndexOOB").replaceFirst("$name", inputField.getSasName()));
             }
             else if (inputField.getOptional() && originalIndex == -1) {
@@ -124,6 +125,7 @@ public class SasReaderStep extends BaseStep implements StepInterface {
                 outputIndex++;
                 continue;
             }
+
 
             Object objectFromSasFile = rowFileValues[originalIndex - 1];
 
